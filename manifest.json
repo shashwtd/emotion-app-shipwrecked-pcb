@@ -1,6 +1,6 @@
 {
-    "displayName": "Better Badge",
-    "logoPath": "better-badge.pbm",
+    "displayName": "Emoji App",
+    "logoPath": "logo.pbm",
     "permissions": [],
-    "appNumber": 11111
+    "appNumber": 65432
 }
