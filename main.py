@@ -26,7 +26,7 @@ class App(badge.BaseApp):
                 "pbm_file": "laugh.pbm"
             },
             "rose": {
-                "name": "Tilted Rose",
+                "name": "Wilted Flower srsly",
                 "button": "SW17",
                 "pbm_file": "rose.pbm"
             },
@@ -36,9 +36,9 @@ class App(badge.BaseApp):
                 "pbm_file": "peace.pbm"
             },
             "heart": {
-                "name": "Heart",
+                "name": "Spread love",
                 "button": "SW13",
-                "pbm_file": "heart.pbm"
+                "pbm_file": "love.pbm"
             },
             "ok": {
                 "name": "Skull",
@@ -109,12 +109,11 @@ class App(badge.BaseApp):
         
         emoji_data = self.emojis[emoji_key]
         
-        # Smaller title
         title = emoji_data["name"]
-        badge.display.nice_text(title, 10, 2, font=18, color=0)
+        badge.display.nice_text(title, 10, 2, font=20, color=0)
         
-        # Line under title, moved up
-        badge.display.hline(0, 22, badge.display.width, 0)
+        # Line under title, moved up slightly
+        badge.display.hline(0, 24, badge.display.width, 0)
         
         # Draw the emoji using PBM file
         self.draw_emoji_from_pbm(emoji_data["pbm_file"])
@@ -125,6 +124,50 @@ class App(badge.BaseApp):
         badge.display.nice_text("[SW5]", badge.display.width - 50, 182, font=18, color=0)
         
         badge.display.show()
+    
+    def play_emoji_sound(self, emoji_key):
+        """Play a buzzer sound that matches the emoji"""
+        try:
+            if emoji_key == "smile":
+                # Happy ascending notes
+                badge.buzzer.tone(523, 0.15)  # C5
+                badge.buzzer.tone(659, 0.15)  # E5
+                badge.buzzer.tone(784, 0.2)   # G5
+            elif emoji_key == "thumbs_up":
+                # Positive confirmation beep
+                badge.buzzer.tone(880, 0.1)   # A5
+                badge.buzzer.tone(1109, 0.2)  # C#6
+            elif emoji_key == "laugh":
+                # Bouncy laughing sound
+                badge.buzzer.tone(698, 0.1)   # F5
+                badge.buzzer.tone(784, 0.1)   # G5
+                badge.buzzer.tone(698, 0.1)   # F5
+                badge.buzzer.tone(880, 0.15)  # A5
+            elif emoji_key == "rose":
+                # Gentle romantic melody
+                badge.buzzer.tone(587, 0.2)   # D5
+                badge.buzzer.tone(698, 0.2)   # F5
+                badge.buzzer.tone(784, 0.3)   # G5
+            elif emoji_key == "peace":
+                # Calm peaceful tone
+                badge.buzzer.tone(440, 0.4)   # A4 - long and peaceful
+            elif emoji_key == "heart":
+                # Sweet love melody
+                badge.buzzer.tone(659, 0.2)   # E5
+                badge.buzzer.tone(784, 0.2)   # G5
+                badge.buzzer.tone(880, 0.3)   # A5
+            elif emoji_key == "ok":
+                # Approval beep
+                badge.buzzer.tone(1047, 0.15) # C6
+                badge.buzzer.tone(1319, 0.2)  # E6
+            elif emoji_key == "wave":
+                # Waving goodbye melody
+                badge.buzzer.tone(784, 0.1)   # G5
+                badge.buzzer.tone(659, 0.1)   # E5
+                badge.buzzer.tone(523, 0.1)   # C5
+                badge.buzzer.tone(392, 0.2)   # G4
+        except Exception as e:
+            self.logger.error(f"Buzzer error: {e}")
 
     def draw_emoji_from_pbm(self, pbm_filename):
         try:
@@ -136,8 +179,8 @@ class App(badge.BaseApp):
                 badge.display.text("emoji image", 10, 90, 1)
                 return
             
-            # Bigger emoji display area (more space now with smaller title)
-            emoji_area_height = 175 - 25  # From y=25 to y=175
+            # Emoji display area (adjusted for slightly bigger title)
+            emoji_area_height = 175 - 27  # From y=27 to y=175
             emoji_area_width = badge.display.width
             
             # Scale up the emoji if it's smaller than the available space
@@ -150,7 +193,7 @@ class App(badge.BaseApp):
             
             # Center the scaled emoji
             center_x = (emoji_area_width - scaled_width) // 2
-            center_y = 25 + (emoji_area_height - scaled_height) // 2
+            center_y = 27 + (emoji_area_height - scaled_height) // 2
             
             # Draw scaled emoji
             for y in range(height):
@@ -285,6 +328,7 @@ class App(badge.BaseApp):
                 if button_attr and badge.input.get_button(button_attr):
                     self.selected_emoji = emoji_key
                     self.current_screen = "emoji"
+                    self.play_emoji_sound(emoji_key)  # Play sound for the emoji
                     self.draw_emoji(emoji_key)
                     time.sleep(0.3)
                     return
